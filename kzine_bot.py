@@ -92,7 +92,7 @@ def submit_entries(reddit, entries, subreddit):
         reddit.submit_link(url, title, subreddit)
 
         if entries:
-            time.sleep(60)
+            time.sleep(600)
  
 def main():
     kzine_url = r'http://www.kzine.se/feed'
