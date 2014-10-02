@@ -32,7 +32,7 @@ class Reddit:
         r_json = json.loads(r.content.decode())
         
         try:
-            self.modhash = r_json['json']['data']['modhash'] # New modhash from me request
+            self.modhash = r_json['json']['data']['modhash']    # New modhash from me request
         except:
             self.modhash = 'Could not get me.json' 
         
@@ -54,7 +54,17 @@ class Reddit:
         r_json = json.loads(r.content.decode())
         return r_json
 
-    
+def load_config():
+    f = open('kzb.conf')    # kzb.conf contains a json object, python dict, 
+    config = json.load(f)   # all values strings enclosed in double quotes
+
+    username = config['username']
+    password = config['password']
+    feed_url = config['feed_url']
+    subreddit = config['subreddit']
+
+    return username, password, feed_url, subreddit
+
 def get_entries(reddit_submitted, url):
     feed = feedparser.parse(url)
     reddit_submitted_urls = []
@@ -93,16 +103,16 @@ def submit_entries(reddit, entries, subreddit):
 
         if entries:
             time.sleep(600)
+
  
 def main():
-    kzine_url = r'http://www.kzine.se/feed'
-    subreddit = 'subreddit'
-    
+    username, password, feed_url, subreddit = load_config()
+
     reddit = Reddit()
-    reddit.login('username','password')
+    reddit.login(username, password)
 
     submitted_reddit = reddit.get_submissions()
-    entries_unsubmitted = get_entries(submitted_reddit, kzine_url)
+    entries_unsubmitted = get_entries(submitted_reddit, feed_url)
     to_submit = get_current_entries(entries_unsubmitted)
     to_submit.reverse() # Age descending, oldest first
     
@@ -110,3 +120,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+
