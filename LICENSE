@@ -50,6 +50,7 @@ Requests:
 feedparser:
 
     http://code.google.com/p/feedparser/
+    https://github.com/kurtmckee/feedparser
 
     Copyright (c) 2010-2013 Kurt McKee <contactme@kurtmckee.org>
     Copyright (c) 2002-2008 Mark Pilgrim
