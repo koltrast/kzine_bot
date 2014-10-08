@@ -8,9 +8,9 @@ import time
 import datetime
 
 class Reddit: 
-    def __init__(self):
+    def __init__(self, headers):
         self.session = requests.Session()
-        self.session.headers = {'user-agent': 'headers'}
+        self.session.headers = {'user-agent': headers}
 
     def login(self, username, password):
         self.username = username
@@ -56,12 +56,13 @@ def load_config():
     f = open('.kzbconf')    # kzb.conf contains a json object, python dict, 
     config = json.load(f)   # all values strings enclosed in double quotes
 
+    headers = config['headers']
     username = config['username']
     password = config['password']
     feed_url = config['feed_url']
     subreddit = config['subreddit']
 
-    return username, password, feed_url, subreddit
+    return username, password, headers, feed_url, subreddit
 
 def get_entries(reddit_submitted, url):
     feed = feedparser.parse(url)
@@ -102,9 +103,9 @@ def submit_entries(reddit, entries, subreddit):
             time.sleep(600)
  
 def main():
-    username, password, feed_url, subreddit = load_config()
+    headers, username, password, feed_url, subreddit = load_config()
 
-    reddit = Reddit()
+    reddit = Reddit(headers)
     reddit.login(username, password)
 
     submitted_reddit = reddit.get_submissions()
