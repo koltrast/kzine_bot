@@ -62,7 +62,7 @@ def load_config():
     feed_url = config['feed_url']
     subreddit = config['subreddit']
 
-    return username, password, headers, feed_url, subreddit
+    return headers, username, password, feed_url, subreddit
 
 def get_entries(reddit_submitted, url):
     feed = feedparser.parse(url)
