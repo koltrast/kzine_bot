@@ -33,10 +33,7 @@ class Reddit:
         r = self.session.get(r'http://www.reddit.com/api/me.json')
         r_json = json.loads(r.content.decode())
         
-        try:
-            self.modhash = r_json['json']['data']['modhash']    # New modhash from me request
-        except:
-            self.modhash = 'Could not get me.json' 
+        self.modhash = r_json['json']['data']['modhash']    # New modhash from me request
         
         return r_json
 
