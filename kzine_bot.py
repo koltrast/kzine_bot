@@ -57,7 +57,7 @@ class Reddit:
         return r_json
 
 def load_config():
-    f = open('kzb.conf')    # kzb.conf contains a json object, python dict, 
+    f = open('.kzbconf')    # kzb.conf contains a json object, python dict, 
     config = json.load(f)   # all values strings enclosed in double quotes
 
     username = config['username']
