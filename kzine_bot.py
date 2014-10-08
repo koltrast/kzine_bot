@@ -93,7 +93,6 @@ def get_current_entries(entries):
     return to_submit
 
 def submit_entries(reddit, entries, subreddit):
-    
     while entries:
         entry = entries.pop(0)
         url = entry['links'][0]['href']
@@ -102,7 +101,6 @@ def submit_entries(reddit, entries, subreddit):
 
         if entries:
             time.sleep(600)
-
  
 def main():
     username, password, feed_url, subreddit = load_config()
