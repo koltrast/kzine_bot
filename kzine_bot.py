@@ -6,7 +6,6 @@ import feedparser
 import json
 import time
 import datetime
-from pprint import pprint
 
 class Reddit: 
     def __init__(self):
@@ -27,7 +26,7 @@ class Reddit:
         try:
             self.modhash = r_json['json']['data']['modhash']
         except:
-            pprint(r_json)
+            print(r_json)
 
     def get_me(self):
         r = self.session.get(r'http://www.reddit.com/api/me.json')
