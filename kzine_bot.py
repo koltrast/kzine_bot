@@ -7,11 +7,17 @@ import json
 import time
 import datetime
 
+"""
+A class that creates a user object
+"""
 class Reddit: 
     def __init__(self, headers):
         self.session = requests.Session()
         self.session.headers = {'user-agent': headers}
 
+    """
+    Login user, set modhash, print login response if failed
+    """
     def login(self, username, password):
         self.username = username
         self.password = password
@@ -28,11 +34,16 @@ class Reddit:
         except:
             print(r_json)
 
+    """
+    For checking whether logged in or not
+    Not used at the moment.
+    """
     def get_me(self):
         r = self.session.get(r'http://www.reddit.com/api/me.json')
         r_json = json.loads(r.content.decode())
-        
-        self.modhash = r_json['json']['data']['modhash']    # New modhash from me request
+       
+        # Recieve a new modhash from me request 
+        self.modhash = r_json['json']['data']['modhash']
         
         return r_json
 
@@ -52,9 +63,12 @@ class Reddit:
         r_json = json.loads(r.content.decode())
         return r_json
 
+"""
+Parses the config and returns all values as a tuple
+"""
 def load_config():
-    with open('.kzbconf') as f: # kzb.conf contains a json object, python dict, 
-        config = json.load(f)   # all values strings enclosed in double quotes
+    with open('.kzbconf') as f:
+        config = json.load(f)
 
     headers = config['headers']
     username = config['username']
@@ -64,6 +78,9 @@ def load_config():
 
     return headers, username, password, feed_url, subreddit
 
+"""
+Gets entries from the feed that have not been previously posted to reddit
+"""
 def get_entries(reddit_submitted, url):
     feed = feedparser.parse(url)
     reddit_submitted_urls = []
@@ -79,6 +96,9 @@ def get_entries(reddit_submitted, url):
 
     return unsubmitted
 
+"""
+Gets entries that have been added within a timeframe, atm 24 hours 
+"""
 def get_current_entries(entries):
     time_now = datetime.datetime.now() 
     to_submit = []
@@ -92,6 +112,10 @@ def get_current_entries(entries):
 
     return to_submit
 
+"""
+Submits entries it has been passed, if more than one, sleeps for 10 minutes 
+between submissions to prevent spaminess.
+"""
 def submit_entries(reddit, entries, subreddit):
     while entries:
         entry = entries.pop(0)
@@ -111,7 +135,10 @@ def main():
     submitted_reddit = reddit.get_submissions()
     entries_unsubmitted = get_entries(submitted_reddit, feed_url)
     to_submit = get_current_entries(entries_unsubmitted)
-    to_submit.reverse() # Age descending, oldest first
+
+    # We want to submit the oldest submission first, the feed has oldest last
+    # Should be redone to something more reliable
+    to_submit.reverse()
     
     submit_entries(reddit, to_submit, subreddit)
     
