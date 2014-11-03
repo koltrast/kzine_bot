@@ -6,6 +6,7 @@ import feedparser
 import json
 import time
 import datetime
+from operator import attrgetter
 
 """
 A class that creates a user object
@@ -107,7 +108,7 @@ def get_current_entries(entries):
         entry_time = datetime.datetime.fromtimestamp(time.mktime(entry['published_parsed']))
         time_delta = time_now - entry_time
 
-        if time_delta.days == 0:
+        if time_delta.days < 1:
             to_submit.append(entry)
 
     return to_submit
@@ -125,6 +126,13 @@ def submit_entries(reddit, entries, subreddit):
 
         if entries:
             time.sleep(600)
+
+"""
+Sort entries by age, oldest first
+"""
+def sort_age(to_submit):
+    to_submit = sorted(to_submit, key=attrgetter('published_parsed'))
+    return to_submit
  
 def main():
     headers, username, password, feed_url, subreddit = load_config()
@@ -135,10 +143,7 @@ def main():
     submitted_reddit = reddit.get_submissions()
     entries_unsubmitted = get_entries(submitted_reddit, feed_url)
     to_submit = get_current_entries(entries_unsubmitted)
-
-    # We want to submit the oldest submission first, the feed has oldest last
-    # Should be redone to something more reliable
-    to_submit.reverse()
+    to_submit = sort_age(to_submit)
     
     submit_entries(reddit, to_submit, subreddit)
     
