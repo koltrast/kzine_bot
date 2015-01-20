@@ -108,7 +108,7 @@ def get_current_entries(entries):
         entry_time = datetime.datetime.fromtimestamp(time.mktime(entry['published_parsed']))
         time_delta = time_now - entry_time
 
-        if time_delta.days < 2:
+        if time_delta.days < 1:
             to_submit.append(entry)
 
     return to_submit
