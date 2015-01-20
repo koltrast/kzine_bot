@@ -108,7 +108,7 @@ def get_current_entries(entries):
         entry_time = datetime.datetime.fromtimestamp(time.mktime(entry['published_parsed']))
         time_delta = time_now - entry_time
 
-        if time_delta.days < 1:
+        if time_delta.days < 2:
             to_submit.append(entry)
 
     return to_submit
@@ -121,7 +121,12 @@ def submit_entries(reddit, entries, subreddit):
     while entries:
         entry = entries.pop(0)
         url = entry['links'][0]['href']
-        title = entry['title'] + ' - ' + entry['author']
+
+        try:
+            title = entry['title'] + ' - ' + entry['author']
+        except KeyError:
+            title = entry['title']
+
         reddit.submit_link(url, title, subreddit)
 
         if entries:
