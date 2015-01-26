@@ -8,17 +8,11 @@ import time
 import datetime
 from operator import attrgetter
 
-"""
-A class that creates a user object
-"""
 class Reddit: 
     def __init__(self, headers):
         self.session = requests.Session()
         self.session.headers = {'user-agent': headers}
 
-    """
-    Login user, set modhash, print login response if failed
-    """
     def login(self, username, password):
         self.username = username
         self.password = password
@@ -35,10 +29,6 @@ class Reddit:
         except:
             print(r_json)
 
-    """
-    For checking whether logged in or not
-    Not used at the moment.
-    """
     def get_me(self):
         r = self.session.get(r'http://www.reddit.com/api/me.json')
         r_json = json.loads(r.content.decode())
@@ -64,9 +54,6 @@ class Reddit:
         r_json = json.loads(r.content.decode())
         return r_json
 
-"""
-Parses the config and returns all values as a tuple
-"""
 def load_config():
     with open('.kzbconf') as f:
         config = json.load(f)
@@ -79,9 +66,6 @@ def load_config():
 
     return headers, username, password, feed_url, subreddit
 
-"""
-Gets entries from the feed that have not been previously posted to reddit
-"""
 def get_entries(reddit_submitted, url):
     feed = feedparser.parse(url)
     reddit_submitted_urls = []
@@ -93,13 +77,10 @@ def get_entries(reddit_submitted, url):
         if (feed['entries'][index]['links'][0]['href'] in reddit_submitted_urls) == False:
             unsubmitted.append(feed['entries'][index])
         else: 
-            break   # Don't want to submit older than latest submission
+            break
 
     return unsubmitted
 
-"""
-Gets entries that have been added within a timeframe, atm 24 hours 
-"""
 def get_current_entries(entries):
     time_now = datetime.datetime.now() 
     to_submit = []
@@ -113,10 +94,6 @@ def get_current_entries(entries):
 
     return to_submit
 
-"""
-Submits entries it has been passed, if more than one, sleeps for 10 minutes 
-between submissions to prevent spaminess.
-"""
 def submit_entries(reddit, entries, subreddit):
     while entries:
         entry = entries.pop(0)
@@ -132,9 +109,6 @@ def submit_entries(reddit, entries, subreddit):
         if entries:
             time.sleep(600)
 
-"""
-Sort entries by age, oldest first
-"""
 def sort_age(to_submit):
     to_submit = sorted(to_submit, key=attrgetter('published_parsed'))
     return to_submit
