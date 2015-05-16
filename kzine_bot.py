@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import requests
 import feedparser
@@ -57,13 +56,7 @@ def load_config():
     with open('.kzbconf') as f:
         config = json.load(f)
 
-    headers = config['headers']
-    username = config['username']
-    password = config['password']
-    feed_url = config['feed_url']
-    subreddit = config['subreddit']
-
-    return headers, username, password, feed_url, subreddit
+    return config
 
 def get_entries(reddit_submitted, url):
     feed = feedparser.parse(url)
@@ -116,17 +109,17 @@ def sort_age(to_submit):
     return to_submit
  
 def main():
-    headers, username, password, feed_url, subreddit = load_config()
+    config = load_config()
 
-    reddit = Reddit(headers)
-    reddit.login(username, password)
+    reddit = Reddit(config['headers'])
+    reddit.login(config['username'], config['password'])
 
     submitted_reddit = reddit.get_submissions()
-    entries_unsubmitted = get_entries(submitted_reddit, feed_url)
+    entries_unsubmitted = get_entries(submitted_reddit, config['feed_url'])
     to_submit = get_current_entries(entries_unsubmitted)
     to_submit = sort_age(to_submit)
     
-    submit_entries(reddit, to_submit, subreddit)
+    submit_entries(reddit, to_submit, config['subreddit'])
     
 if __name__ == "__main__":
     main()
